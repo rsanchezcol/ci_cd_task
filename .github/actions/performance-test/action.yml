@@ -3,15 +3,18 @@ description: 'Runs performance tests using Apache JMeter'
 runs:
     steps:
       - name: Set up Docker
+        shell: bash
         run: |
           docker --version
 
       - name: Start Python App Container
+        shell: bash
         run: |
           docker run -d --name python-app -p 8000:8000 myapp:latest
           sleep 5 # Wait for the app to start
 
       - name: Install Apache JMeter
+        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-11-jre
@@ -21,10 +24,12 @@ runs:
           echo "$(pwd)/jmeter/bin" >> $GITHUB_PATH
 
       - name: Verify JMeter Installation
+        shell: bash
         run: |
           jmeter -v
 
       - name: Run JMeter Performance Test
+        shell: bash
         run: |
           jmeter -n -t .github/actions/performance-test/jmeter-test.jmx -l results.jtl -e -o report
 
@@ -35,6 +40,7 @@ runs:
           path: report/
 
       - name: Check JMeter Test Results
+        shell: bash
         run: |
           if grep -q '<failure>true</failure>' results.jtl; then
             echo "JMeter test failed! Check the report."
@@ -44,6 +50,7 @@ runs:
           fi
 
       - name: Stop and Remove Python App Container
+        shell: bash
         run: |
           docker stop python-app
           docker rm python-app
