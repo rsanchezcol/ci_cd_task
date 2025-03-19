@@ -1,6 +1,6 @@
 name: 'JMeter Performance Test'
 description: 'Runs performance tests using Apache JMeter'
-runs: |
+run: |
       docker run -d --name python-app -p 8000:8000 rsanchezcol/myapp:latest
       sleep 5 # Wait for the app to start
       
