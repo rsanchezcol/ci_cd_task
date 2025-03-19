@@ -3,12 +3,6 @@ description: 'Runs performance tests using Apache JMeter'
 runs:
     using: "composite"
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-
       - name: Set up Docker
         shell: bash
         run: |
@@ -39,12 +33,6 @@ runs:
         shell: bash
         run: |
           jmeter -n -t .github/actions/performance-test/jmeter-test.jmx -l results.jtl -e -o report
-
-      - name: Upload JMeter Test Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: jmeter-test-report
-          path: report/
 
       - name: Check JMeter Test Results
         shell: bash
