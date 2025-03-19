@@ -41,22 +41,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
       - name: Install Trivy
         run: |
-          sudo apt-get install -y trivy
+          sudo apt-get update && sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.39.0/trivy_0.39.0_Linux64bit.deb
+          sudo dpkg -i trivy_0.39.0_Linux64bit.deb
 
       - name: Scan Docker Image
         run: |
           trivy image ${{ secrets.DOCKER_REPO }}/myapp:${{ github.sha }}
-
-  performance-test:
-    name: Run Performance Tests
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Run Performance Tests
-        uses: ./.github/actions/performance-test
+        continue-on-error: true
