@@ -1,6 +1,11 @@
 name: 'JMeter Performance Test'
 description: 'Runs performance tests using Apache JMeter'
+outputs:
+  random-number:
+    description: "Random number"
+    value: ${{ steps.random-number-generator.outputs.random-number }}
 runs:
+    using: "composite"
     steps:
       - name: Set up Docker
         shell: bash
