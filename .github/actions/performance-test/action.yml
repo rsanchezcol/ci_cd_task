@@ -3,6 +3,9 @@ description: 'Runs performance tests using Apache JMeter'
 runs:
     using: "composite"
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        
       - name: Set up Docker
         shell: bash
         run: |
