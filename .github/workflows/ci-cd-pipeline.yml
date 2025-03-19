@@ -52,5 +52,17 @@ jobs:
 
       - name: Scan Docker Image
         run: |
-          trivy image ${{ secrets.DOCKER_REPO }}/myapp:${{ github.sha }}
+          trivy image myapp:${{ github.sha }}
         continue-on-error: true
+
+  performance-test:
+    name: Run Performance Tests
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run Performance Tests
+        uses: ./.github/actions/performance-test
