@@ -56,16 +56,23 @@ jobs:
       - name: Pull Image from Docker Hub
         run: |
           docker pull rsanchezcol/myapp:latest
+          docker tag rsanchezcol/myapp:latest myapp:latest
       - name: Install Trivy
         run: |
           sudo apt-get update && sudo apt-get install -y wget
           wget https://github.com/aquasecurity/trivy/releases/download/v0.60.0/trivy_0.60.0_Linux-64bit.deb
           sudo dpkg -i trivy_0.60.0_Linux-64bit.deb
 
-      - name: Scan Docker Image
+      - name: Scan Docker Image 1
+        run: |
+          trivy image rsanchezcol/myapp:latest
+        continue-on-error: true
+
+      - name: Scan Docker Image 2
         run: |
           trivy image myapp:latest
         continue-on-error: false
+
 
   performance-test:
     name: Run Performance Tests
