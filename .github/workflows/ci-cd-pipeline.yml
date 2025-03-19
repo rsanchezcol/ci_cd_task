@@ -29,12 +29,11 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build -t myapp:${{ github.sha }} .
-          docker tag myapp:latest ${{ secrets.DOCKER_REPO }}/myapp:latest
+          docker tag myapp:${{ github.sha }} ${{ secrets.DOCKER_REPO }}/myapp:latest
 
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKER_REPO }}/myapp:latest
-          docker push ${{ secrets.DOCKER_REPO }}/myapp:${{ github.sha }
 
   security-scan:
     name: Security Scan with Trivy
