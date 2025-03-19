@@ -1,31 +1,49 @@
 name: 'JMeter Performance Test'
 description: 'Runs performance tests using Apache JMeter'
-run: |
-      docker run -d --name python-app -p 8000:8000 rsanchezcol/myapp:latest
-      sleep 5 # Wait for the app to start
-      
-      # Install Apache JMeter
-      sudo apt-get update
-      sudo apt-get install -y openjdk-11-jre
-      wget https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.5.tgz
-      tar -xvzf apache-jmeter-5.5.tgz
-      mv apache-jmeter-5.5 jmeter
-      echo "$(pwd)/jmeter/bin" >> $GITHUB_PATH
+runs:
+    steps:
+      - name: Set up Docker
+        run: |
+          docker --version
 
-      # Verify JMeter Installation
-      jmeter -v
+      - name: Start Python App Container
+        run: |
+          docker run -d --name python-app -p 8000:8000 myapp:latest
+          sleep 5 # Wait for the app to start
 
-      # Run JMeter Performance Test
-      jmeter -n -t .github/actions/performance-test/jmeter-test.jmx -l results.jtl -e -o report
+      - name: Install Apache JMeter
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jre
+          wget https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.5.tgz
+          tar -xvzf apache-jmeter-5.5.tgz
+          mv apache-jmeter-5.5 jmeter
+          echo "$(pwd)/jmeter/bin" >> $GITHUB_PATH
 
-      # Check JMeter Test Results
-      if grep -q '<failure>true</failure>' results.jtl; then
-        echo "JMeter test failed! Check the report."
-        exit 1
-      else
-        echo "JMeter test passed successfully!"
-      fi
+      - name: Verify JMeter Installation
+        run: |
+          jmeter -v
 
-      # Stop and Remove Python App Container
-      docker stop python-app
-      docker rm python-app
+      - name: Run JMeter Performance Test
+        run: |
+          jmeter -n -t .github/actions/performance-test/jmeter-test.jmx -l results.jtl -e -o report
+
+      - name: Upload JMeter Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: jmeter-test-report
+          path: report/
+
+      - name: Check JMeter Test Results
+        run: |
+          if grep -q '<failure>true</failure>' results.jtl; then
+            echo "JMeter test failed! Check the report."
+            exit 1
+          else
+            echo "JMeter test passed successfully!"
+          fi
+
+      - name: Stop and Remove Python App Container
+        run: |
+          docker stop python-app
+          docker rm python-app
