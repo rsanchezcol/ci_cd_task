@@ -5,6 +5,8 @@ on:
     branches:
       - main
   pull_request:
+  
+  workflow_dispatch:  # Enables manual execution in GitHub Actions
 
 jobs:
   build:
